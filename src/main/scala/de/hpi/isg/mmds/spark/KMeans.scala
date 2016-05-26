@@ -33,8 +33,7 @@ class KMeans(inputUrl: String, k: Int, numIterations: Int) {
     pointsRDD.cache()
 
     // Generate random initial centroids.
-    val random = new Random()
-    val initialCentroids = for (i <- 1 to k) yield TaggedPoint(random.nextDouble(), random.nextDouble(), i)
+    val initialCentroids = createRandomCentroids(k)
 
     // Loop: Iteratively do the two k-means phases.
     var centroids = initialCentroids
@@ -97,8 +96,11 @@ object KMeans {
       sys.exit(1)
     }
 
+    val startTime = java.lang.System.currentTimeMillis
     new KMeans(args(0), args(1).toInt, args(2).toInt).run()
-  }
+    val endTime = java.lang.System.currentTimeMillis
+
+    println(f"Finished in ${endTime - startTime}%,d ms.")  }
 
 }
 
