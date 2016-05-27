@@ -19,6 +19,7 @@ if __name__ == '__main__':
     import sys
     if len(sys.argv) == 1:
         print "Usage: python datagen.py <#points> <avg x,avg y,standard dev>+"
+        sys.exit(1)
 
     numpoints = int(sys.argv[1])
 
