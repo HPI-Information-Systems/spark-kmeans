@@ -61,15 +61,15 @@ class KMeans(inputUrl: String, k: Int, numIterations: Int) {
       val newCentroidsRDD = nearestCentroidRDD.keyBy(_.centroidId).reduceByKey(_ + _).map(_._2.average)
 
       // Collect the new centroids and clean up.
+      // Notice that only here we really trigger execution of our Spark job.
       centroids = newCentroidsRDD.collect().toIndexedSeq
       centroids = centroids ++ createRandomCentroids(k - centroids.size) // We might have <k centroids.
       centroidsBc.unpersist(false)
     }
+    sc.stop()
 
     println("Results:")
     centroids.foreach(println _)
-
-    sc.stop()
   }
 
   /**
@@ -151,7 +151,7 @@ case class TaggedPoint(x: Double, y: Double, centroidId: Int) extends PointLike
 /**
   * Represents a two-dimensional point with a centroid ID and a counter attached.
   */
-case class TaggedPointCounter(x: Double, y: Double, centroidId: Int, val count: Int = 1) extends PointLike {
+case class TaggedPointCounter(x: Double, y: Double, centroidId: Int, count: Int = 1) extends PointLike {
 
   def this(point: PointLike, centroidId: Int, count: Int = 1) = this(point.x, point.y, centroidId, count)
 
